@@ -36,28 +36,9 @@ git init
 git add .
 git commit -m "Agente recolector: simulación inicial"
 git branch -M main
-git remote add origin <url-de-tu-repo>
+git remote add origin (https://github.com/GerardoVAZNAV7/agente_recolector.git)
 git push -u origin main
 ```
-
-El `.gitignore` ya excluye `node_modules`, `dist`, `.vercel` y archivos de
-entorno, así que el repositorio queda limpio.
-
-## Desplegar en Vercel
-
-**Opción A — Dashboard:** importa el repositorio de GitHub en
-[vercel.com/new](https://vercel.com/new). Vercel detecta Vite
-automáticamente (Build Command: `vite build`, Output Directory: `dist`). No
-requiere variables de entorno.
-
-**Opción B — CLI:**
-
-```bash
-npm i -g vercel
-vercel
-vercel --prod
-```
-
 ## Estructura del proyecto
 
 ```
