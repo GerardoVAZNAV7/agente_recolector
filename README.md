@@ -48,29 +48,46 @@ npm run build
 npm run preview
 ```
 
----
+## Subir a GitHub
 
-## 🎮 Guía de Uso del Simulador
+```bash
+git init
+git add .
+git commit -m "Agente recolector: simulación inicial"
+git branch -M main
+git remote add origin (https://github.com/GerardoVAZNAV7/agente_recolector.git)
+git push -u origin main
+```
+## Estructura del proyecto
 
-No necesitas modificar el código fuente para probar diferentes comportamientos o mapas. La interfaz permite interactuar directamente con la simulación:
+```
+src/
+  core/                   ← lógica del agente, en archivos separados y en español
+    entorno.js            ← el almacén real (grid, paquetes, obstáculos)
+    percepcion.js         ← percibir(): sensores del agente
+    memoria.js            ← mapa conocido, visitadas, relación padre (backtracking)
+    decision.js           ← decidir(): reglas de prioridad de la estrategia
+    accion.js             ← actuar(): actuadores (mover / recoger)
+    rendimiento.js        ← tabla oficial de puntuación
+    simulador.js           ← orquesta el ciclo ENTORNO→SENSORES→...→ENTORNO
+  composables/
+    useSimulador.js        ← puente reactivo entre el núcleo y la interfaz
+  components/
+    BarraSuperior.vue
+    TableroMapa.vue        ← cuadrícula (editor y visor de simulación)
+    PanelRediseno.vue      ← herramientas para construir el mapa
+    PanelPuntuacion.vue    ← tabla de puntos en vivo
+    PanelMemoria.vue       ← mapa conocido / bitácora del agente
+    BarraControles.vue
+  App.vue
+  main.js
+```
 
-1. **Modo Rediseño (Diseño de Mapas):**
-   * Configura las dimensiones de la cuadrícula.
-   * Utiliza la paleta de herramientas para agregar o remover:
-     * 📦 **Paquetes**: Objetivos a recolectar.
-     * 🚧 **Obstáculos**: Bloqueos que el agente debe esquivar.
-     * 🤖 **Agente**: Punto de inicio.
-   * *Nota:* El sistema valida automáticamente que no existan paquetes inalcanzables.
+## Cómo probar los 3 escenarios de la práctica sin tocar el código
 
-2. **Ejecutar Simulación:**
-   * Haz clic en **"Iniciar simulación"**.
-   * Observa la toma de decisiones en tiempo real, la bitácora de memoria del agente y la tabla de puntuación/rendimiento.
-
----
-
-## 📐 Ejemplo: Configuración de Escenarios
-
-Puedes reproducir un escenario clásico de prueba de 5×5 directamente desde la interfaz:
+En modo "Rediseño", crea un mapa de 5×5 y coloca los objetos usando la
+paleta (Paquete / Obstáculo / Inicio agente) para reproducir cada escenario
+del enunciado. Por ejemplo, el Escenario 1:
 
 ```text
 . . . P .
