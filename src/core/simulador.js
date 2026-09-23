@@ -1,14 +1,9 @@
 // ============================================================================
 // SIMULADOR
 // ----------------------------------------------------------------------------
-// Orquesta el ciclo del agente, un paso (turno) a la vez, para que la
-// interfaz pueda reproducirlo automáticamente o paso a paso:
-//
-//   ENTORNO → SENSORES → PERCEPCIÓN → MEMORIA → DECISIÓN → ACCIÓN →
-//   MEDIDA DE RENDIMIENTO → ENTORNO
-//
-// Esta clase es el "programa del agente" (la función que transforma
-// percepciones en acciones) puesto en marcha turno a turno.
+// Orquesta el ciclo del agente turno a turno:
+//   entorno, sensores, percepcion, memoria, decision, accion, rendimiento.
+// Es el "programa del agente" en marcha: paso a paso o automatico.
 // ============================================================================
 
 import { percibir } from './percepcion.js'
@@ -17,7 +12,7 @@ import { decidir } from './decision.js'
 import { actuar, EVENTO } from './accion.js'
 import { puntosPorEvento, esPenalizacion, esMovimiento, BONO_TODOS_LOS_PAQUETES } from './rendimiento.js'
 
-export const MAX_ACCIONES = 50
+export const MAX_ACCIONES = 100
 
 export class Simulador {
   /** @param {import('./entorno.js').Entorno} entorno */
@@ -38,21 +33,21 @@ export class Simulador {
     this.ultimaPercepcion = null
     this.ultimaAccion = null
     this.ultimoEvento = null
-    this.registro = [] // bitácora legible para el panel de memoria / depuración
+    this.registro = [] // bitacora legible para el panel de memoria
   }
 
-  /** Ejecuta un único turno del ciclo del agente. Devuelve el resumen del turno. */
+  /** Ejecuta un unico turno del ciclo del agente. Devuelve el resumen del turno. */
   paso() {
     if (this.terminado) return null
 
-    // --- SENSORES / PERCEPCIÓN ---
+    // SENSORES Y PERCEPCION
     const percepcion = percibir(this.entorno, this.posicionAgente)
     this.memoria.actualizarConPercepcion(percepcion)
 
-    // --- DECISIÓN ---
+    // DECISION
     const accion = decidir(percepcion, this.memoria)
 
-    // --- ACCIÓN / ACTUADORES ---
+    // ACCION y ACTUADORES
     const posicionAntes = this.posicionAgente
     const { nuevaPosicion, evento } = actuar(this.entorno, this.posicionAgente, accion)
 
@@ -62,8 +57,7 @@ export class Simulador {
     }
     if (esMovimiento(evento)) {
       this.movimientos += 1
-      // Mantiene la pila de recorrido (ver memoria.js) para que el
-      // backtracking siga siempre el camino realmente caminado.
+      // Si avance a celda nueva, apilo de donde vengo; si retrocedi, desapilo.
       if (accion.esBacktracking) {
         this.memoria.desapilarOrigen()
       } else {
@@ -74,7 +68,7 @@ export class Simulador {
 
     this.posicionAgente = nuevaPosicion
 
-    // --- MEDIDA DE RENDIMIENTO ---
+    // MEDIDA DE RENDIMIENTO
     this.puntuacion += puntosPorEvento(evento)
     this.acciones += 1
 
@@ -92,7 +86,7 @@ export class Simulador {
     this.registro.push(entradaBitacora)
     if (this.registro.length > 200) this.registro.shift()
 
-    // --- CONDICIONES DE TÉRMINO ---
+    // CONDICIONES DE TERMINO
     if (!this.entorno.quedanPaquetes()) {
       this.puntuacion += BONO_TODOS_LOS_PAQUETES
       this.terminado = true
@@ -108,7 +102,7 @@ export class Simulador {
     return entradaBitacora
   }
 
-  /** Ejecuta pasos hasta terminar (o hasta un tope de seguridad). */
+  /** Ejecuta pasos hasta terminar (con un tope de seguridad). */
   ejecutarHastaElFinal() {
     let seguridad = MAX_ACCIONES + 5
     while (!this.terminado && seguridad > 0) {

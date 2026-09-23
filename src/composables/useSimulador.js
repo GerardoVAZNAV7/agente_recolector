@@ -1,9 +1,9 @@
 // ============================================================================
 // COMPOSABLE: usarSimulador
 // ----------------------------------------------------------------------------
-// Puente reactivo entre el núcleo del agente (src/core) y los componentes
-// Vue. No contiene lógica de decisión: solo orquesta el estado de la app
-// (modo editor / simulación, reproducción automática, etc.).
+// Puente reactivo entre el nucleo del agente (src/core) y los componentes
+// Vue. Solo maneja el estado de la app (modo editor/simulacion, reproduccion
+// automatica, etc.). No tiene logica de decision.
 // ============================================================================
 
 import { reactive, ref, computed } from 'vue'
@@ -32,7 +32,7 @@ export function usarSimulador() {
   const modo = ref('editor') // 'editor' | 'simulacion'
   const vistaActual = ref('global') // 'global' (mapa real) | 'robot' (solo lo descubierto)
 
-  // ---------------- Estado de la simulación ----------------
+  // ---------------- Estado de la simulacion ----------------
   const simulador = ref(null)
   const reproduciendo = ref(false)
   const velocidadMs = ref(350)
@@ -53,11 +53,11 @@ export function usarSimulador() {
     herramientaActiva.value = herramienta
   }
 
-  /** Click sobre una celda del editor: coloca la herramienta activa. */
+  /** Click en una celda del editor: colocar la herramienta activa. */
   function pintarCelda(fila, columna) {
     if (herramientaActiva.value === HERRAMIENTAS.AGENTE) {
       posicionInicialAgente.value = { fila, columna }
-      // El agente no puede iniciar sobre un obstáculo o un paquete.
+      // El agente no puede iniciar sobre un obstaculo ni un paquete.
       cuadricula.value[fila][columna] = SIMBOLOS.VACIO
       return
     }
@@ -68,7 +68,7 @@ export function usarSimulador() {
       [HERRAMIENTAS.BORRAR]: SIMBOLOS.VACIO
     }[herramientaActiva.value]
 
-    // No se puede colocar un obstáculo justo donde inicia el agente.
+    // No dejar un obstaculo justo donde inicia el agente.
     if (
       simbolo === SIMBOLOS.OBSTACULO &&
       fila === posicionInicialAgente.value.fila &&
@@ -97,7 +97,7 @@ export function usarSimulador() {
     return new Entorno(dimensiones.filas, dimensiones.columnas, paquetes, obstaculos, posicionInicialAgente.value)
   }
 
-  /** Valida el mapa y, si es correcto, arranca la simulación. */
+  /** Valida el mapa y arranca la simulacion si todo esta bien. */
   function iniciarSimulacion() {
     const entornoBorrador = construirEntorno()
 

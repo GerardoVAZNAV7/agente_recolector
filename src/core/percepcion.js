@@ -1,12 +1,10 @@
 // ============================================================================
-// PERCEPCIÓN — SENSORES
+// PERCEPCIONES  (SENSORES)
 // ----------------------------------------------------------------------------
-// percibir() es la ÚNICA función autorizada a leer el entorno real. Devuelve
-// exclusivamente lo que el agente podría "sentir" desde su posición actual:
-// la celda donde está parado y las cuatro celdas adyacentes. Nada más.
-//
-// El objeto que retorna es la PERCEPCIÓN del ciclo
-// ENTORNO → SENSORES → PERCEPCIÓN → DECISIÓN → ACCIÓN → ENTORNO
+// percibir() es la unica funcion autorizada a leer el entorno real. Devuelve
+// todo lo que el agente puede sentir en su turno: su posicion, la celda en la
+// que esta y el contenido de las 4 casillas vecinas. Nada mas.
+// Recordar: sin una percepcion el agente no tiene entrada para decidir.
 // ============================================================================
 
 import { CONTENIDO } from './entorno.js'
@@ -20,7 +18,7 @@ export const DIRECCIONES = {
 
 /**
  * @param {import('./entorno.js').Entorno} entorno
- * @param {{fila:number, columna:number}} posicion posición actual del agente
+ * @param {{fila:number, columna:number}} posicion posicion actual del agente
  * @returns {{
  *   posicion: {fila:number, columna:number},
  *   actual: string,
@@ -33,8 +31,8 @@ export function percibir(entorno, posicion) {
 
   return {
     posicion: { ...posicion },
-    // La celda actual nunca puede contener al propio agente como obstáculo;
-    // reportamos su contenido "de suelo" (vacío o paquete).
+    // La celda actual se reporta como "suelo" (vacia o paquete): el agente
+    // nunca puede ser obstaculo para si mismo.
     actual: entorno.contenidoDeCelda(posicion.fila, posicion.columna),
     arriba: celdaEn(DIRECCIONES.ARRIBA.fila, DIRECCIONES.ARRIBA.columna),
     abajo: celdaEn(DIRECCIONES.ABAJO.fila, DIRECCIONES.ABAJO.columna),
@@ -43,7 +41,7 @@ export function percibir(entorno, posicion) {
   }
 }
 
-/** Utilidad: nombre de dirección -> celda destino, dada una posición. */
+/** Utilidad: convertir el nombre de una direccion en la celda que toca desde cierta posicion. */
 export function celdaDestino(posicion, nombreDireccion) {
   const d = DIRECCIONES[nombreDireccion]
   return { fila: posicion.fila + d.fila, columna: posicion.columna + d.columna }

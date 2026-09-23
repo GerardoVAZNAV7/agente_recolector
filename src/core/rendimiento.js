@@ -1,13 +1,10 @@
 // ============================================================================
 // MEDIDA DE RENDIMIENTO
 // ----------------------------------------------------------------------------
-// Tabla oficial de puntuación de la práctica:
-//
-//   Recoger un paquete                  +10
-//   Realizar un movimiento               -1
-//   Intentar salir del tablero           -5
-//   Intentar chocar con un obstáculo     -5
-//   Recoger todos los paquetes          +20 adicionales
+// Tabla oficial de puntos de la practica. No confundir con los puntajes
+// internos de decision.js (esos solo sirven para elegir direccion).
+//   paquete +10 | movimiento -1 | salir del tablero -5
+//   chocar obstaculo -5 | bono todos los paquetes +20
 // ============================================================================
 
 import { EVENTO } from './accion.js'
@@ -30,12 +27,12 @@ export function puntosPorEvento(evento) {
   return PUNTOS[evento] ?? 0
 }
 
-/** Indica si un evento cuenta como "penalización" para la tabla de resultados. */
+/** Indica si un evento cuenta como "penalizacion" en la tabla de resultados. */
 export function esPenalizacion(evento) {
   return evento === EVENTO.INTENTO_SALIR_TABLERO || evento === EVENTO.INTENTO_CHOCAR_OBSTACULO
 }
 
-/** Indica si un evento cuenta como "movimiento" para la tabla de resultados. */
+/** Indica si un evento cuenta como "movimiento" en la tabla de resultados. */
 export function esMovimiento(evento) {
   return evento === EVENTO.MOVIMIENTO_VALIDO
 }

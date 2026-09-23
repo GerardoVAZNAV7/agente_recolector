@@ -1,16 +1,10 @@
 // ============================================================================
 // MEMORIA DEL AGENTE
 // ----------------------------------------------------------------------------
-// Esta clase NO forma parte del entorno: es información que el propio agente
-// va construyendo turno a turno a partir de lo que percibe. Es la base para
-// que decidir() pueda explorar, evitar repetir caminos y hacer backtracking.
-//
-// El backtracking se implementa con una PILA del camino realmente recorrido
-// (como en una búsqueda en profundidad clásica): cada vez que el agente
-// avanza hacia una celda nueva, apila la posición de la que viene; cada vez
-// que retrocede, desapila. Esto garantiza que el regreso sigue exactamente
-// el camino ya caminado (sin "atajos" inventados) y evita que el agente
-// rebote entre dos celdas sin llegar nunca a una zona nueva.
+// Informacion que el agente construye turno a turno con lo que percibe.
+// Guardo tres cosas: el mapa conocido, las celdas visitadas y la PILA del
+// camino recorrido (para el backtracking).
+// Recordar: esto NO es el entorno real, es la memoria interna del agente.
 // ============================================================================
 
 import { CONTENIDO } from './entorno.js'
@@ -20,17 +14,16 @@ export class MemoriaAgente {
     this.filas = filas
     this.columnas = columnas
 
-    // Mapa conocido por el agente: empieza todo en DESCONOCIDO ('?').
+    // Mapa conocido: al inicio todo es DESCONOCIDO ('?').
     this.mapaConocido = Array.from({ length: filas }, () =>
       Array.from({ length: columnas }, () => CONTENIDO.DESCONOCIDO)
     )
 
-    // Posiciones ya visitadas físicamente por el agente.
+    // Posiciones por las que el agente ya paso fisicamente.
     this.visitadas = new Set()
 
-    // Pila con el camino recorrido desde el punto de partida hasta la
-    // posición actual (sin incluirla). Es el "historial de posiciones"
-    // que permite el backtracking.
+    // Pila del camino real hasta la posicion actual (sin incluirla).
+    // Es lo que permite el backtracking en decision.js.
     this.pilaRecorrido = []
 
     this.ultimoEvento = null
@@ -46,7 +39,7 @@ export class MemoriaAgente {
   }
 
   esConocida(fila, columna) {
-    if (fila < 0 || fila >= this.filas || columna < 0 || columna >= this.columnas) return true // el borde se "conoce" como fuera del tablero
+    if (fila < 0 || fila >= this.filas || columna < 0 || columna >= this.columnas) return true // el borde se conoce como fuera del tablero
     return this.mapaConocido[fila][columna] !== CONTENIDO.DESCONOCIDO
   }
 
@@ -56,8 +49,8 @@ export class MemoriaAgente {
   }
 
   /**
-   * Actualiza el mapa conocido con los datos de una percepción y registra
-   * la posición actual como visitada.
+   * Actualiza el mapa conocido con los datos de la percepcion y marca la
+   * posicion actual como visitada.
    */
   actualizarConPercepcion(percepcion) {
     const { posicion, actual, arriba, abajo, izquierda, derecha } = percepcion
@@ -76,18 +69,18 @@ export class MemoriaAgente {
     this._actualizarCelda(fila, columna, CONTENIDO.VACIO)
   }
 
-  /** Última posición del camino recorrido (a dónde retroceder), o null si no hay. */
+  /** A donde retroceder (el tope de la pila), o null si la pila esta vacia. */
   posicionDeRetroceso() {
     if (this.pilaRecorrido.length === 0) return null
     return this.pilaRecorrido[this.pilaRecorrido.length - 1]
   }
 
-  /** Se llama al avanzar hacia una celda nueva: guarda de dónde venimos. */
+  /** Se llama al avanzar a una celda nueva: guardo de donde vengo. */
   apilarOrigen(posicion) {
     this.pilaRecorrido.push({ ...posicion })
   }
 
-  /** Se llama al completar un movimiento de backtracking: consume el tope de la pila. */
+  /** Se llama al completar un retroceso: quito el tope de la pila. */
   desapilarOrigen() {
     this.pilaRecorrido.pop()
   }

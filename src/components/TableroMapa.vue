@@ -14,8 +14,7 @@ const props = defineProps({
 
 const emit = defineEmits(['pintar-celda'])
 
-// Tipo lógico de cada celda para pintarla, sin importar si viene del editor
-// o de la simulación (real o memoria del agente).
+// Tipo logico de cada celda para pintarla (editor, simulacion o memoria).
 const tipoDeCelda = computed(() => {
   const filas = []
   for (let f = 0; f < props.filas; f++) {
@@ -43,7 +42,7 @@ function calcularTipo(f, c) {
     return 'VACIO'
   }
 
-  // modo simulación
+  // modo simulacion
   const sim = props.simulador
   if (!sim) return 'VACIO'
 
@@ -57,7 +56,7 @@ function calcularTipo(f, c) {
     return sim.memoria.fueVisitada(f, c) ? 'VISITADA' : 'VACIO'
   }
 
-  // vista robot: SOLO lo que el agente ha descubierto
+  // vista robot: solo lo que el agente ha descubierto
   const conocido = sim.memoria.mapaConocido[f][c]
   if (conocido === CONTENIDO.DESCONOCIDO) return 'DESCONOCIDA'
   if (conocido === CONTENIDO.PAQUETE) return 'PAQUETE'

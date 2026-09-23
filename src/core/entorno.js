@@ -1,10 +1,9 @@
 // ============================================================================
 // ENTORNO
 // ----------------------------------------------------------------------------
-// Representa el almacén REAL. El agente NUNCA debe leer este objeto
-// directamente para decidir; solo lo hace a través de percibir() (ver
-// percepcion.js). Esto mantiene la simulación honesta respecto a la
-// restricción de la actividad: "el agente no conoce el mapa completo".
+// Representa el almacen real. El agente no debe leer este objeto para decidir:
+// solo puede hacerlo percibir(). Asi conservo la restriccion de la practica:
+// el agente no conoce el mapa completo.
 // ============================================================================
 
 export const CONTENIDO = {
@@ -16,7 +15,7 @@ export const CONTENIDO = {
   DESCONOCIDO: 'DESCONOCIDO'
 }
 
-// Símbolos usados por el editor de mapas / import-export de escenarios.
+// Simbolos del editor de mapas y del formato de escenarios.
 export const SIMBOLOS = {
   VACIO: '.',
   PAQUETE: 'P',
@@ -37,7 +36,7 @@ export class Entorno {
     this.columnas = columnas
     this.posicionInicialAgente = { ...posicionInicialAgente }
 
-    // Set de claves "fila,columna" para búsquedas O(1).
+    // Uso sets de claves "fila,columna" para buscar en tiempo O(1).
     this.obstaculos = new Set(obstaculos.map(p => this._clave(p.fila, p.columna)))
     this.paquetesRestantes = new Set(paquetes.map(p => this._clave(p.fila, p.columna)))
     this.totalPaquetesIniciales = this.paquetesRestantes.size
@@ -59,7 +58,7 @@ export class Entorno {
     return this.paquetesRestantes.has(this._clave(fila, columna))
   }
 
-  /** Devuelve el contenido REAL de una celda (uso exclusivo del ambiente/sensores). */
+  /** Contenido REAL de una celda. Solo lo usa percibir() (los sensores). */
   contenidoDeCelda(fila, columna) {
     if (!this.estaDentroDelTablero(fila, columna)) return CONTENIDO.FUERA_DEL_TABLERO
     if (this.contieneObstaculo(fila, columna)) return CONTENIDO.OBSTACULO
@@ -67,7 +66,7 @@ export class Entorno {
     return CONTENIDO.VACIO
   }
 
-  /** Elimina el paquete de la celda indicada (efecto de la acción RECOGER). */
+  /** Efecto de la accion RECOGER: se elimina el paquete de la celda. */
   quitarPaquete(fila, columna) {
     this.paquetesRestantes.delete(this._clave(fila, columna))
   }
@@ -81,10 +80,9 @@ export class Entorno {
   }
 
   /**
-   * Recorre (BFS) todas las celdas libres alcanzables desde una posición de
-   * partida, sin atravesar obstáculos ni salir del tablero. Se usa para
-   * validar en el editor que ningún paquete quede en una región del
-   * laberinto desconectada de donde inicia el agente.
+   * BFS sobre las celdas libres alcanzables desde un inicio, sin atravesar
+   * obstaculos ni salir del tablero. Se usa en el editor para validar que
+   * ningun paquete quede aislado del agente.
    */
   celdasAlcanzablesDesde(inicio) {
     const visitadas = new Set()
@@ -109,10 +107,9 @@ export class Entorno {
   }
 
   /**
-   * Versión completa de la validación: además de exigir una celda libre
-   * adyacente, comprueba que el paquete esté en la misma región conectada
-   * (sin obstáculos de por medio) que la posición inicial del agente.
-   * Devuelve la lista de paquetes que el agente nunca podría alcanzar.
+   * Validacion completa: pide que el paquete quede en la misma region
+   * conectada que la posicion inicial del agente. Devuelve la lista de
+   * paquetes que el agente nunca podria alcanzar.
    */
   validarPaquetesInalcanzablesDesdeInicio() {
     const alcanzables = this.celdasAlcanzablesDesde(this.posicionInicialAgente)
