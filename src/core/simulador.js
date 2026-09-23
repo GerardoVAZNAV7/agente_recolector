@@ -17,7 +17,7 @@ import { decidir } from './decision.js'
 import { actuar, EVENTO } from './accion.js'
 import { puntosPorEvento, esPenalizacion, esMovimiento, BONO_TODOS_LOS_PAQUETES } from './rendimiento.js'
 
-export const MAX_ACCIONES = 50
+export const MAX_ACCIONES = 100
 
 export class Simulador {
   /** @param {import('./entorno.js').Entorno} entorno */
