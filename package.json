@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node tests/pathfinding.test.js",
+    "comparar": "node tests/comparar.js"
   },
   "dependencies": {
     "vue": "^3.4.21"

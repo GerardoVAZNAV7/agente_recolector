@@ -21,7 +21,7 @@ const filasMapaConocido = computed(() => {
 const etiquetaAccion = (accion) => {
   if (!accion) return '—'
   if (accion.tipo === 'RECOGER') return 'RECOGER'
-  return `MOVER ${accion.direccion}${accion.esBacktracking ? ' (backtracking)' : ''}`
+  return `MOVER ${accion.direccion}${accion.esBacktracking ? ' (backtracking)' : ''}${accion.desdeRuta ? ' (ruta)' : ''}`
 }
 
 const etiquetaEvento = {
@@ -70,47 +70,3 @@ const etiquetaEvento = {
     </template>
   </section>
 </template>
-
-<style scoped>
-.panel {
-  border: 2px solid var(--onyx);
-  background: var(--onyx);
-  color: var(--bone);
-  padding: 14px;
-}
-.panel__titulo {
-  margin: 0 0 12px;
-  border-bottom: 1.5px solid var(--bone);
-  padding-bottom: 8px;
-  color: var(--bone);
-}
-.vacio {
-  font-size: 11px;
-  opacity: 0.55;
-}
-.bloque {
-  margin-bottom: 12px;
-}
-.etiqueta {
-  color: var(--honey);
-  opacity: 0.9;
-}
-.dato-mono {
-  margin: 4px 0 0;
-  font-size: 12px;
-}
-.dato-mono--tenue {
-  opacity: 0.6;
-  font-size: 11px;
-}
-.mapa-conocido {
-  margin: 6px 0 0;
-  font-size: 10px;
-  line-height: 1.5;
-  background: var(--onyx-soft);
-  border: 1px solid rgba(242, 239, 234, 0.25);
-  padding: 8px;
-  overflow-x: auto;
-  white-space: pre;
-}
-</style>

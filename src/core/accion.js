@@ -29,6 +29,10 @@ export function actuar(entorno, posicionActual, accion) {
     return { nuevaPosicion: { ...posicionActual }, evento: EVENTO.SIN_ACCION }
   }
 
+  if (accion.tipo === 'OBSERVAR') {
+    return { nuevaPosicion: { ...posicionActual }, evento: EVENTO.SIN_ACCION }
+  }
+
   if (accion.tipo === 'RECOGER') {
     // Quita el paquete del almacen y me quedo en la misma celda.
     entorno.quitarPaquete(posicionActual.fila, posicionActual.columna)

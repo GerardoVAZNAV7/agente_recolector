@@ -8,6 +8,9 @@ defineProps({
 
 const emit = defineEmits([
   'iniciar',
+  'iniciar-dijkstra',
+  'iniciar-astar',
+  'comparar',
   'paso',
   'alternar-reproduccion',
   'redisenar',
@@ -18,9 +21,20 @@ const emit = defineEmits([
 
 <template>
   <div class="controles">
-    <button v-if="modo === 'editor'" class="boton boton--principal" @click="emit('iniciar')">
-      ▶ Iniciar simulación
-    </button>
+    <template v-if="modo === 'editor'">
+      <button class="boton boton--principal" @click="emit('iniciar')">
+        ▶ Recolectar (Reactivo)
+      </button>
+      <button class="boton boton--dijkstra" @click="emit('iniciar-dijkstra')">
+        ▶ Con Dijkstra
+      </button>
+      <button class="boton boton--astar" @click="emit('iniciar-astar')">
+        ▶ Con A*
+      </button>
+      <button class="boton boton--comparar" @click="emit('comparar')">
+        ⚖ A* VS Dijkstra
+      </button>
+    </template>
 
     <template v-else>
       <button class="boton" @click="emit('paso')" :disabled="reproduciendo || terminado">
@@ -84,6 +98,21 @@ const emit = defineEmits([
   background: var(--fern);
   color: var(--bone);
   border-color: var(--fern);
+}
+.boton--dijkstra {
+  background: #5b7c99;
+  color: var(--bone);
+  border-color: #5b7c99;
+}
+.boton--astar {
+  background: #7c5a96;
+  color: var(--bone);
+  border-color: #7c5a96;
+}
+.boton--comparar {
+  background: var(--slate);
+  color: var(--bone);
+  border-color: var(--slate);
 }
 .boton--fantasma {
   margin-left: auto;

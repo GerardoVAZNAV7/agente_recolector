@@ -7,6 +7,7 @@ import TableroMapa from './components/TableroMapa.vue'
 import PanelRediseno from './components/PanelRediseno.vue'
 import PanelPuntuacion from './components/PanelPuntuacion.vue'
 import PanelMemoria from './components/PanelMemoria.vue'
+import PanelComparacion from './components/PanelComparacion.vue'
 import BarraControles from './components/BarraControles.vue'
 
 const {
@@ -27,7 +28,12 @@ const {
   simulador,
   reproduciendo,
   MAX_ACCIONES,
+  MODO_BUSQUEDA,
   iniciarSimulacion,
+  iniciarConDijkstra,
+  iniciarConAStar,
+  comparacion,
+  compararAlgoritmos,
   pasoManual,
   alternarReproduccion,
   redisenarMapa,
@@ -39,7 +45,7 @@ const terminado = computed(() => simulador.value?.terminado ?? false)
 
 <template>
   <div class="app-shell">
-    <BarraSuperior titulo="Agente" />
+    <BarraSuperior titulo="Agente Recolector - A* y Dijkstra" />
 
     <main class="contenido">
       <section class="columna-mapa">
@@ -48,6 +54,8 @@ const terminado = computed(() => simulador.value?.terminado ?? false)
           <span v-if="modo === 'editor'" class="pista">modo diseño</span>
           <span v-else class="pista">
             {{ vistaActual === 'global' ? 'vista global (mapa real)' : 'vista robot (solo lo descubierto)' }}
+            <span v-if="simulador?.modoBusqueda === MODO_BUSQUEDA.DIJKSTRA"> | Dijkstra</span>
+            <span v-if="simulador?.modoBusqueda === MODO_BUSQUEDA.ASTAR"> | A*</span>
           </span>
         </div>
 
@@ -68,6 +76,9 @@ const terminado = computed(() => simulador.value?.terminado ?? false)
           :terminado="terminado"
           :vista="vistaActual"
           @iniciar="iniciarSimulacion"
+          @iniciar-dijkstra="iniciarConDijkstra"
+          @iniciar-astar="iniciarConAStar"
+          @comparar="compararAlgoritmos"
           @paso="pasoManual"
           @alternar-reproduccion="alternarReproduccion"
           @redisenar="redisenarMapa"
@@ -92,6 +103,8 @@ const terminado = computed(() => simulador.value?.terminado ?? false)
         />
 
         <PanelMemoria v-else :simulador="simulador" />
+
+        <PanelComparacion :comparacion="comparacion" :max-acciones="MAX_ACCIONES" />
       </aside>
     </main>
   </div>
@@ -99,47 +112,52 @@ const terminado = computed(() => simulador.value?.terminado ?? false)
 
 <style scoped>
 .app-shell {
-  width: min(1180px, 100%);
-  font-family: var(--font-mono);
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .contenido {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.95fr);
-  gap: 16px;
-  background: var(--bone);
-  border: 2px solid var(--onyx);
-  border-top: none;
-  padding: 16px;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 18px;
+  align-items: start;
 }
 
 .columna-mapa {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  min-width: 0;
 }
 
 .encabezado-mapa {
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
   gap: 10px;
+  flex-wrap: wrap;
 }
+
 .titulo-mapa {
   margin: 0;
+  color: var(--bone);
   font-size: 15px;
 }
+
 .pista {
   font-size: 10px;
-  color: var(--onyx);
-  opacity: 0.55;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  color: var(--bone);
+  opacity: 0.65;
 }
 
 .columna-lateral {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
 }
 
 @media (max-width: 860px) {
